@@ -1,8 +1,4 @@
-import plotly.express as px
 import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.image import imread
 import plotly.graph_objects as go
 import pandas as pd
 

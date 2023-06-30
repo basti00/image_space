@@ -2,7 +2,6 @@ from flask import Flask, render_template, request
 import cv2
 import plotly.graph_objects as go
 import numpy as np
-import json
 import seperate
 
 app = Flask(__name__)
@@ -19,7 +18,7 @@ def home():
         # Generate Plotly graph based on analysis results
         #fig = go.Figure(data=go.Scatter(x=[1, 2, 3], y=[6, 5, 6]))
 
-        image = seperate.scale_down(img, 10)
+        image = seperate.scale_down(img, 80)
         fig = seperate.seperate_plot(image)
         fig.update_layout(height=1000, autosize=True)
         return render_template('index.html', plot=fig.to_html(full_html=False))

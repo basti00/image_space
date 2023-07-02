@@ -18,7 +18,26 @@
           height: 100%;
           background-color: #000000; /* Dark background color */
         }
-    
+        
+        #plotly-graph-div js-plotly-plot {
+            height: 100%;
+        }
+
+        #imageContainer {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 30%;
+        max-width: 200px; /* Optional: Add a max-width to limit the container's width */
+        overflow: hidden; /* Clip the image if it exceeds the container's boundaries */
+        }
+
+        #imageContainer img {
+            width: 100%; /* Make the image fill the container's width */
+            height: auto; /* Maintain the image's aspect ratio */
+            object-fit: contain; /* Scale the image to fit while preserving aspect ratio */
+        }
+
         #upload-field {
           position: absolute;
           top: 20px;
@@ -33,11 +52,7 @@
             text-align:center; 
             color:#000000; /* Text color */
         }
-        
-        #upload-field label:hover {
-            background-color:rgba(255,0,255,0.7); /* Semi-transparent white background on hover */
-        }
-        
+
       </style>
 </head>
 <body>
@@ -49,6 +64,10 @@
     
     <div id="upload-field" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
         <p>Drag and drop a picture here.</p>
+    </div>
+
+    <div id="imageContainer">
+        <img src="data:image/jpeg;base64,{{ img_base64 }}" alt="Uploaded Image">
     </div>
 
     <script>

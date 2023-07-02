@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Upload Picture</title>
+    <title>3D Image Space</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         body {
@@ -16,7 +16,7 @@
           left: 0;
           width: 100%;
           height: 100%;
-          background-color: #000000; /* Dark background color */
+          background-color: #111111; /* Dark background color */
         }
         
         #plotly-graph-div js-plotly-plot {
@@ -24,12 +24,12 @@
         }
 
         #imageContainer {
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        width: 30%;
-        max-width: 200px; /* Optional: Add a max-width to limit the container's width */
-        overflow: hidden; /* Clip the image if it exceeds the container's boundaries */
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 30%;
+            max-width: 200px; /* Optional: Add a max-width to limit the container's width */
+            overflow: hidden; /* Clip the image if it exceeds the container's boundaries */
         }
 
         #imageContainer img {
@@ -80,8 +80,6 @@
       </style>
 </head>
 <body>
-    <h1>Upload a Picture</h1>
-
     <div id="plotly-container">
         {{ plot|safe }}
     </div>

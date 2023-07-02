@@ -25,20 +25,25 @@ def scale_down(image, width, just_fig=False):
 
     # Calculate the desired height of the resized image
     # by dividing the desired width by the aspect ratio
-    desired_height = width / aspect_ratio
+
+    if aspect_ratio < 1/3:
+        # prevent low aspect ratio images from being too high
+        desired_height = width * 3
+        desired_width = aspect_ratio * desired_height
+    else:
+        desired_height = width / aspect_ratio
+        desired_width = width
 
     # Use cv2.resize() to downsample the image to the desired dimensions
-    resized_image = cv2.resize(image, (width, int(desired_height)))
+    resized_image = cv2.resize(image, (int(desired_width), int(desired_height)))
 
     return resized_image
 
 def seperate_plot(image, name='', save_html=False):
     # Convert the image to a 3D numpy array, where the dimensions
     # represent the red, green, and blue channels of the image
-    print(image.shape)
     samples = image.reshape(-1, 3)
 
-    print(samples.shape)
     # Create a plotly figure using the scatter3d function, which
     # will plot the 3D samples as a scatter plot
     
@@ -53,8 +58,6 @@ def seperate_plot(image, name='', save_html=False):
     df.loc[len(df.index)] = [255,255,255]
 
     df = df.drop_duplicates()
-
-    print(df.shape)
 
     df['hex'] = df.apply(lambda r: rgb_to_hex(*r), axis=1)
     

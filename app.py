@@ -5,7 +5,36 @@ import numpy as np
 import seperate
 import base64
 
+import logging
+from logging.handlers import RotatingFileHandler
+
 app = Flask(__name__)
+
+# Configure logging
+log_file = 'server.log'
+max_bytes = 10e6
+backup_count = 1
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+    handlers=[
+        RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count)
+    ]
+)
+
+app.logger.addHandler(logging.getLogger())
+
+@app.before_request
+def log_request_info():
+    ip_address = request.remote_addr
+    user_agent = request.user_agent.string
+    app.logger.info('Request from IP: %s', ip_address)
+    app.logger.info('User Agent: %s', user_agent)
+    app.logger.info('Request: %s %s', request.method, request.url)
+    #app.logger.info('Request headers: %s', request.headers)
+    #app.logger.info('Request body: %s', request.get_data(as_text=True))
 
 @app.route('/', methods=['GET', 'POST'])
 def home():

@@ -58,6 +58,40 @@
             margin-top: 30px;
         }
 
+        #upload-form {
+            position: absolute;
+            top: 140px;
+            left: 20px;
+            width: 250px;
+            height: 50px;
+            border-radius: 10px;
+            background-color: #333; /* Dark background color */
+            border: 1px solid #555; /* Border color */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #file-input {
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.0);
+            border: none;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        #file-input:hover {
+            background-color: rgba(0, 0, 0, 0.0);
+        }
+
+        #file-input:focus {
+            outline: none;
+        }
+
+
         #progress-bar {
             width: 80%;
             height: 10px;
@@ -88,6 +122,10 @@
         <p id=status-text>Drag and drop a picture here</p>
         <progress id="progress-bar" value="0" max="100"></progress>
     </div>
+    
+    <form id="upload-form">
+        <input type="file" id="file-input" onchange="handleFileSelect(event)">
+    </form>
 
     <div id="imageContainer">
         <img src="data:image/jpeg;base64,{{ img_base64 }}" alt="Uploaded Image">
@@ -102,6 +140,12 @@
 
         function handleDragOver(e) {
             e.preventDefault();
+            event.dataTransfer.dropEffect = "copy";
+        }
+
+        function handleFileSelect(event) {
+            var files = event.target.files[0];
+            uploadFile(files);
         }
 
         function uploadFile(file) {

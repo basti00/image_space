@@ -39,18 +39,42 @@
         }
 
         #upload-field {
-          position: absolute;
-          top: 20px;
-          left: 20px;
-          width: 250px;
-          height: 100px;
-          border-radius: 10px;
-          background-color: rgba(255,255,255,0.7); /* Semi-transparent white background */
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 250px;
+            height: 100px;
+            border-radius: 10px;
+            background-color: #333; /* Dark background color */
+            border: 1px solid #555; /* Border color */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Shadow effect */
+            color: #fff; /* Text color */
+            font-family: Arial, sans-serif;
+            font-size: 14px;
         }
-        
+
         #upload-field p {
-            text-align:center; 
-            color:#000000; /* Text color */
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        #progress-bar {
+            width: 80%;
+            height: 10px;
+            margin: 10px auto;
+            display: block;
+            background-color: #555; /* Progress bar background color */
+            border-radius: 5px;
+        }
+
+        #progress-bar::-webkit-progress-value {
+            background-color: #4CAF50; /* Progress bar color */
+            border-radius: 5px;
+        }
+
+        #progress-bar::-webkit-progress-bar {
+            background-color: #555; /* Progress bar background color */
+            border-radius: 5px;
         }
 
       </style>
@@ -63,7 +87,8 @@
     </div>
     
     <div id="upload-field" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
-        <p>Drag and drop a picture here.</p>
+        <p id=status-text>Drag and drop a picture here</p>
+        <progress id="progress-bar" value="0" max="100"></progress>
     </div>
 
     <div id="imageContainer">
@@ -85,28 +110,45 @@
             var formData = new FormData();
             formData.append('file', file);
 
-            fetch('/', {
-                method: 'POST',
-                body: formData
-            }).then(function(response) {
-                return response.text();
-            }).then(function(html) {
-                document.body.innerHTML = html;
+            var progressBar = document.getElementById('progress-bar');
+            var statusText = document.getElementById('status-text');
+            var xhr = new XMLHttpRequest();
 
-                // Rerun all scripts after exchanging the body
-                var tempContainer = document.createElement('div');
-                tempContainer.innerHTML = html;
-                // Extract all script elements from the temporary container
-                var scripts = tempContainer.querySelectorAll('script');
-                // Create and append new script elements to execute them
-                scripts.forEach(function(script) {
-                    var newScript = document.createElement('script');
-                    Array.from(script.attributes).forEach(function(attr) {
-                    newScript.setAttribute(attr.name, attr.value);
-                    });
-                    newScript.appendChild(document.createTextNode(script.innerHTML));
-                    document.head.appendChild(newScript); // Or use document.body if necessary
+            xhr.open('POST', '/');
+            xhr.upload.addEventListener('progress', function (e) {
+                var percentComplete = (e.loaded / e.total) * 100;
+                progressBar.value = percentComplete;
+                statusText.textContent = "uploading...";
+                if(e.loaded == e.total){
+                    statusText.textContent = "calculating...";
+                }
+            });
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    document.body.innerHTML = xhr.responseText;
+                    var tempContainer = document.createElement('div');
+                    tempContainer.innerHTML = xhr.responseText;
+                    reloadScripts();
+                }
+            };
+            
+            xhr.send(formData);
+        }
+
+        function reloadScripts(){
+            var tempContainer = document.createElement('div');
+            tempContainer.innerHTML = document.body.innerHTML;
+            // Extract all script elements from the temporary container
+            var scripts = tempContainer.querySelectorAll('script');
+            // Create and append new script elements to execute them
+            scripts.forEach(function(script) {
+                var newScript = document.createElement('script');
+                Array.from(script.attributes).forEach(function(attr) {
+                newScript.setAttribute(attr.name, attr.value);
                 });
+                newScript.appendChild(document.createTextNode(script.innerHTML));
+                document.head.appendChild(newScript); // Or use document.body if necessary
             });
         }
     </script>
